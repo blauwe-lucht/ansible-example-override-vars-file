@@ -1,0 +1,12 @@
+node1
+node2
+node3
+
+[product1]
+node1
+node2
+node3
+
+[has_overrides]
+node1
+node2

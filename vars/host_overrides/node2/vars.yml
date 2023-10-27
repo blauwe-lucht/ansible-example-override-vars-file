@@ -1,0 +1,6 @@
+---
+product_dependencies_overrides:
+  - name: library2
+    version: 2.2.0
+  - name: library3
+    version: 3.3.0
