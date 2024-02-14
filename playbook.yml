@@ -1,5 +1,6 @@
 ---
-- hosts: product1
+- name: Example how to use overrides for lists
+  hosts: product1
   gather_facts: false
   vars_files:
     - vars/{{ product_name }}/vars.yml
@@ -12,12 +13,12 @@
       when: "'has_overrides' in group_names"
 
     - name: Initialize final product dependencies list
-      set_fact:
+      ansible.builtin.set_fact:
         final_product_dependencies: []
       tags: always
 
     - name: Merge product_dependencies with product_dependencies_overrides
-      set_fact:
+      ansible.builtin.set_fact:
         final_product_dependencies: "{{ final_product_dependencies + [override | default(product_dependency)] }}"
       loop: "{{ product_dependencies }}"
       loop_control:
@@ -29,39 +30,39 @@
       tags: always
 
     - name: Use final product dependencies list as product_dependencies
-      set_fact:
+      ansible.builtin.set_fact:
         product_dependencies: "{{ final_product_dependencies }}"
       when: product_dependencies_overrides is defined
       tags: always
 
   tasks:
     - name: Display product_dependencies
-      debug:
+      ansible.builtin.debug:
         var: product_dependencies
 
     - name: Check that product_dependency of library2 is 2.1.0 for node1
-      assert:
+      ansible.builtin.assert:
         that:
           - (product_dependencies | selectattr('name', 'equalto', 'library2') | first).version == '2.1.0'
         fail_msg: "product_dependency of library2 is not 2.1.0 for node1"
       when: ansible_host == 'node1'
 
     - name: Check that product_dependency of library2 is 2.2.0 for node2
-      assert:
+      ansible.builtin.assert:
         that:
           - (product_dependencies | selectattr('name', 'equalto', 'library2') | first).version == '2.2.0'
         fail_msg: "product_dependency of library2 is not 2.2.0 for node2"
       when: ansible_host == 'node2'
 
     - name: Check that product_dependency of library3 is 3.3.0 for node2
-      assert:
+      ansible.builtin.assert:
         that:
           - (product_dependencies | selectattr('name', 'equalto', 'library3') | first).version == '3.3.0'
         fail_msg: "product_dependency of library3 is not 3.3.0 for node2"
       when: ansible_host == 'node2'
 
     - name: Check that product_dependency of library2 is 2.0.0 for node3
-      assert:
+      ansible.builtin.assert:
         that:
           - (product_dependencies | selectattr('name', 'equalto', 'library2') | first).version == '2.0.0'
         fail_msg: "product_dependency of library2 is not 2.0.0 for node3"
